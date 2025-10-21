@@ -1,33 +1,48 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
+import { Tabs } from "expo-router";
+import { FontAwesome, FontAwesome5, FontAwesome6, Ionicons } from "@expo/vector-icons";
 
-import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
+export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
-        tabBarButton: HapticTab,
-      }}>
+        tabBarActiveTintColor: "#007AFF",
+        tabBarStyle: {
+          backgroundColor: "#fff",
+          borderTopWidth: 0,
+          elevation: 8,
+          height: 60,
+        },
+      }}
+    >
+
       <Tabs.Screen
-        name="index"
+        name="store"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: "store",
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome5 name="store" size={size} color={color} />
+          ),
         }}
       />
+
       <Tabs.Screen
-        name="explore"
+        name="levels"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: "levels",
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome name='th-list' size={size} color={color} />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="themes"
+        options={{
+          title: "themes",
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome6 name="brush" size={size} color={color} />
+          ),
         }}
       />
     </Tabs>

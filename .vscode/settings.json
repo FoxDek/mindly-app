@@ -3,5 +3,38 @@
     "source.fixAll": "explicit",
     "source.organizeImports": "explicit",
     "source.sortMembers": "explicit"
+  },
+  "hide-files.files": [
+    "tsconfig.json",
+    "README.md",
+    "Desktop.ini",
+    "package.json",
+    "package-lock.json",
+    "expo-env.d.ts",
+    "eslint.config.js",
+    "app.json",
+    ".gitignore",
+    "node_modules",
+    ".expo",
+    ".vscode"
+  ],
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "tsconfig.json": true,
+    "README.md": true,
+    "Desktop.ini": true,
+    "package.json": true,
+    "package-lock.json": true,
+    "expo-env.d.ts": true,
+    "eslint.config.js": true,
+    "app.json": true,
+    ".gitignore": true,
+    "node_modules": true,
+    ".expo": true,
+    ".vscode": true
   }
 }
