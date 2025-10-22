@@ -4,6 +4,7 @@ import { FontAwesome, FontAwesome5, FontAwesome6, Ionicons } from "@expo/vector-
 export default function TabsLayout() {
   return (
     <Tabs
+      initialRouteName="index"
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: "#007AFF",
@@ -27,7 +28,7 @@ export default function TabsLayout() {
       />
 
       <Tabs.Screen
-        name="levels"
+        name="index"
         options={{
           title: "levels",
           tabBarIcon: ({ color, size }) => (

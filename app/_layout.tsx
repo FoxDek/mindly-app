@@ -11,6 +11,17 @@ export default function RootLayout() {
 
   if (!isReady) return <SplashScreen />;
   
-  return <Stack screenOptions={{ headerShown: false, contentStyle: {  } }} />;
+  return (
+  <Stack screenOptions={{headerShown: false}}>
+    <Stack.Screen name="(tabs)" />
+    <Stack.Screen name="(modals)" options={{ 
+      headerShown: false,
+      presentation: 'transparentModal',
+      animation: 'fade',
+      animationDuration: 300
+    }} />
+    
+  </Stack>
+  );
 }
 
