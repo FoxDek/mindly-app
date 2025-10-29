@@ -1,16 +1,17 @@
 import { StyleSheet, Text, View, Pressable, FlatList } from 'react-native';
 import React from 'react'
-import { useLocalSearchParams } from 'expo-router/build/hooks';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { levels } from "@/assets/data/levels-data";
 import { Link, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { userGameProgress } from '../../assets/data/user-data';
 import { Image } from 'expo-image';
+import { useLevelData } from '@/hoocs/useLevelData';
+import { useUserLevelData } from '@/hoocs/useUserLevelData';
 
 export default function Level() {
-  const { level } = useLocalSearchParams();
-  const levelparts = levels[Number(level) - 1].parts
+  const { level, levelAllPartsData } = useLevelData();
+  const { userLevelProgress } = useUserLevelData();
+
+  if (!level) return null;
 
   return (
     <SafeAreaView style={styles.levelContainer}>
@@ -27,7 +28,7 @@ export default function Level() {
       </View>
 
       <FlatList 
-        data={levelparts}
+        data={levelAllPartsData}
         scrollEnabled={false}
         contentContainerStyle={{ flex: 1, width: '100%', gap: 20, paddingHorizontal: 40 }}
         renderItem={({ item: levelPart }) => (
@@ -38,7 +39,7 @@ export default function Level() {
                 style={{
                   width: 30,
                   height: 30,
-                  opacity: userGameProgress[levelPart.id.toString()]?.parts[levelPart.id.toString()]?.isCompleted ? 1 : 0.5
+                  opacity: userLevelProgress?.parts[levelPart.id.toString()]?.isCompleted ? 1 : 0.5
                 }}
                 source={require("@/assets/images/mindly-star.png")}
                 contentFit="cover"

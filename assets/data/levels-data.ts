@@ -1,7 +1,7 @@
 interface AnswerProps {
   word: string;
   synonyms?: string[];
-  percent?: number; // Добавил примерные проценты популярности
+  percent?: number;
 }
 
 interface LevelPartProps {

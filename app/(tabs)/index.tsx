@@ -1,14 +1,16 @@
-import { levels, gameData } from "@/assets/data/levels-data";
+import { gameData } from "@/assets/data/levels-data";
 import { LinearGradient } from "expo-linear-gradient";
-import { FlatList, Text, View, StyleSheet, ScrollView } from "react-native";
+import { Text, View, StyleSheet, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from 'expo-image';
 import { Link } from "expo-router";
-import { userData } from "@/assets/data/user-data";
 import { Ionicons } from "@expo/vector-icons";
 import LevelsList from '../../components/LevelsList';
+import { useUserLevelData } from "@/hoocs/useUserLevelData";
 
 export default function Levels() {
+  const {userData} = useUserLevelData();
+
   return (
     <SafeAreaView style={styles.levelsContainer}>
       <ScrollView style={{ width: '100%', height: '100%' }} contentContainerStyle={{ flexGrow: 1 }}>

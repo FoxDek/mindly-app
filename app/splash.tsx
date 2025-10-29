@@ -1,22 +1,7 @@
 import { Text, ActivityIndicator, StyleSheet } from "react-native";
-import { useEffect } from "react";
-import { useRouter } from "expo-router";
-// import { useProgressStore } from "../store/progressStore";
 import { LinearGradient } from 'expo-linear-gradient';
 
 export default function SplashScreen() {
-  const router = useRouter();
-  // const loadProgress = useProgressStore((s: any) => s.loadProgress);
-
-  useEffect(() => {
-    const init = async () => {
-      // await loadProgress(); // загружаем прогресс из AsyncStorage
-      // можно подождать загрузку шрифтов, ассетов и т.п.
-      await new Promise((res) => setTimeout(res, 800)); // имитация загрузки
-      router.replace("/"); // переходим на главный экран
-    };
-    init();
-  }, []);
 
   return (
     <LinearGradient

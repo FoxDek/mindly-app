@@ -1,15 +1,20 @@
 import { Stack } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import SplashScreen from "./splash";
+import { useUserActions, useUserData } from "@/store/useUserStore";
 
 export default function RootLayout() {
-  const [isReady, setReady] = useState(false);
+  const userData = useUserData(); 
+  const { loadUserData } = useUserActions()
 
   useEffect(() => {
-    if (!isReady) setReady(true);
-  }, [isReady]);
+    loadUserData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  if (!isReady) return <SplashScreen />;
+  if (!userData) {
+    return <SplashScreen />;
+  }
   
   return (
   <Stack screenOptions={{headerShown: false}}>

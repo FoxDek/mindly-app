@@ -1,11 +1,14 @@
 import { FlatList, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { Link } from 'expo-router'
-import { levels } from '@/assets/data/levels-data'
 import { Image } from 'expo-image';
-import { userData, userGameProgress } from '@/assets/data/user-data';
+import { useLevelData } from '@/hoocs/useLevelData';
+import { useUserLevelData } from '@/hoocs/useUserLevelData';
 
 export default function LevelsList() {
+  const {levels} = useLevelData();
+  const { userData, userAllLevelsProgress } = useUserLevelData();
+
   return (
     <FlatList
       data={levels}
@@ -34,7 +37,7 @@ export default function LevelsList() {
                 style={{
                   width: 12,
                   height: 12,
-                  opacity: userGameProgress[level.id.toString()]?.parts[levelPart.id.toString()]?.isCompleted ? 1 : 0.5
+                  opacity: userAllLevelsProgress[level.id.toString()]?.parts[levelPart.id.toString()]?.isCompleted ? 1 : 0.5
                 }}
                 source={require("@/assets/images/mindly-star.png")}
                 contentFit="cover"
