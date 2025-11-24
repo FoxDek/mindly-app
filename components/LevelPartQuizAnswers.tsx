@@ -1,7 +1,10 @@
-import { Dimensions, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useLevelData } from '@/hoocs/useLevelData';
 import { useUserLevelData } from '@/hoocs/useUserLevelData';
 import { blockProcentColors } from '@/assets/data/app-colors';
+import { useEffect, useRef } from 'react';
+import { useScrollActions } from '@/store/useScrollStore';
+import LevelPartAnswerBlock from './LevelPartAnswerBlock';
 
 
 
@@ -22,6 +25,12 @@ export default function LevelPartQuizAnswers() {
   const { levelPartData } = useLevelData();
   const { partProgress } = useUserLevelData();
   const { width } = Dimensions.get('window');
+  const verticalScrollRef = useRef<ScrollView>(null);
+  const { setVerticalScrollRef } = useScrollActions();
+
+  useEffect(() => {
+    setVerticalScrollRef(verticalScrollRef as React.RefObject<ScrollView>);
+  }, []);
 
   if (!levelPartData) return null;
 
@@ -32,6 +41,7 @@ export default function LevelPartQuizAnswers() {
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 150}
     >
       <ScrollView
+        ref={verticalScrollRef}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         nestedScrollEnabled
@@ -46,15 +56,21 @@ export default function LevelPartQuizAnswers() {
         style={{ marginRight: 20, flex: 1 }}
       >
         {/* <View style={{ gap: 10, flex: 1 }}> */}
-          {levelPartData.answers.map((answer) => {
+          {levelPartData.answers.map((answer, index) => {
 
             const isAnswered = partProgress && partProgress.answered.includes(answer.word)
             const blockColor = isAnswered ? 'white' : (answer.percent ? getColorByPercentage(answer.percent) : '#FF6B6B');
 
             return(
-              <View key={answer.word} style={[styles.answerBlock, { backgroundColor: blockColor }]}>
-                <Text style={[styles.answerBlockText, { color: isAnswered ? '#073B4C' : 'white' }]}>{partProgress && partProgress.answered.includes(answer.word) ? answer.word : answer.percent + '%'}</Text>
-              </View>
+
+              <LevelPartAnswerBlock 
+                key={answer.word}
+                answer={answer}
+                isAnswered={isAnswered}
+                blockColor={blockColor}
+                index={index}
+              />
+
             )
           })}
         {/* </View> */}
@@ -64,17 +80,4 @@ export default function LevelPartQuizAnswers() {
 }
 
 
-const styles = StyleSheet.create({
-  answerBlock: {
-    // backgroundColor: 'white',
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  answerBlockText: {
-    fontSize: 20,
-    fontWeight: '600',
-  },
-});
+

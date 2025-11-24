@@ -112,7 +112,7 @@ export const levels: LevelProps[] = [
           { word: "лиса", percent: 20, synonyms: ["рыжая", "хитруля"] },
           { word: "волк", percent: 18, synonyms: ["серый", "хищник"] },
           { word: "медведь", percent: 15, synonyms: ["бурый", "косолапый"] },
-          { word: "белка", percent: 12, synonyms: ["рыжая", "грызун"] },
+          { word: "Белка", percent: 12, synonyms: ["Рыжая", "Грызун"] },
           { word: "ёж", percent: 8, synonyms: ["колючий"] },
           { word: "олень", percent: 5, synonyms: ["рогатый", "лоси"] },
         ],
@@ -152,14 +152,10 @@ export const levels: LevelProps[] = [
       {
         id: 3,
         type: "text",
-        question: "Что бывает во время дождя?",
+        question: "Проверка",
         answers: [
-          { word: "лужи", percent: 32, synonyms: ["водоемы", "ямы"] },
-          { word: "гроза", percent: 25, synonyms: ["молния", "гром"] },
-          { word: "зонт", percent: 18, synonyms: ["зонтик", "трость"] },
-          { word: "плащ", percent: 12, synonyms: ["дождевик", "накидка"] },
-          { word: "мокро", percent: 8, synonyms: ["сыро", "влажно"] },
-          { word: "поток", percent: 5, synonyms: ["ручей", "течение"] },
+          { word: "1", percent: 50, synonyms: ["омлет", "глазунья"] },
+          { word: "2", percent: 50, synonyms: ["овсянка", "гречка"] },
         ],
       },
     ],
@@ -254,4 +250,38 @@ export const levels: LevelProps[] = [
       },
     ],
   },
+  {
+    id: 6,
+    starsForAccess: 0,
+    parts: [
+      {
+        id: 1,
+        type: "text",
+        question: "Проверка 1",
+        answers: [
+          { word: "1", percent: 50, synonyms: ["ответ 1"] },
+          { word: "2", percent: 50, synonyms: ["ответ 2"] },
+        ],
+      },
+      {
+        id: 2,
+        type: "text",
+        question: "Проверка 2",
+        answers: [
+          { word: "1", percent: 50, synonyms: ["ответ 1"] },
+          { word: "2", percent: 50, synonyms: ["ответ 2"] },
+        ],
+      },
+      {
+        id: 3,
+        type: "text",
+        question: "Проверка 3",
+        answers: [
+          { word: "1", percent: 50, synonyms: ["ответ 1"] },
+          { word: "2", percent: 50, synonyms: ["ответ 2"] },
+        ],
+      },
+    ],
+  }
+
 ];

@@ -1,16 +1,24 @@
 import { ScrollView, StyleSheet, Text, View, Dimensions } from "react-native";
-import React from "react";
 import { useLevelData } from "@/hoocs/useLevelData";
 import LevelPartQuizAnswers from "./LevelPartQuizAnswers";
+import { useScrollActions } from "@/store/useScrollStore";
+import { useEffect, useRef } from "react";
 
 export default function LevelPartQuizArea() {
   const { levelPartData } = useLevelData();
   const { width } = Dimensions.get("window");
+  const horizontalScrollRef = useRef<ScrollView>(null);
+  const { setHorizontalScrollRef } = useScrollActions();
+
+  useEffect(() => {
+    setHorizontalScrollRef(horizontalScrollRef as React.RefObject<ScrollView>);
+  }, []);
 
   if (!levelPartData) return null;
 
   return (
     <ScrollView
+      ref={horizontalScrollRef}
       horizontal
       showsHorizontalScrollIndicator={false}
       style={styles.quizContainer}

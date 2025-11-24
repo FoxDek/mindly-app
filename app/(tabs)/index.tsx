@@ -9,7 +9,7 @@ import LevelsList from '../../components/LevelsList';
 import { useUserLevelData } from "@/hoocs/useUserLevelData";
 
 export default function Levels() {
-  const {userData} = useUserLevelData();
+  const { userStarsBalance } = useUserLevelData();
 
   return (
     <SafeAreaView style={styles.levelsContainer}>
@@ -36,7 +36,7 @@ export default function Levels() {
               contentFit="cover"
               transition={1000}
             />
-            <Text style={styles.levelsHeaderBalanceText}>{userData.stars}/{gameData.stars}</Text>
+            <Text style={styles.levelsHeaderBalanceText}>{userStarsBalance}/{gameData.stars}</Text>
           </View>
         </View>
 

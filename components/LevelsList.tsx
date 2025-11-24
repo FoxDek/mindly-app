@@ -7,7 +7,7 @@ import { useUserLevelData } from '@/hoocs/useUserLevelData';
 
 export default function LevelsList() {
   const {levels} = useLevelData();
-  const { userData, userAllLevelsProgress } = useUserLevelData();
+  const { userStarsBalance, userAllLevelsProgress } = useUserLevelData();
 
   return (
     <FlatList
@@ -18,12 +18,12 @@ export default function LevelsList() {
       columnWrapperStyle={{ gap: 10, alignItems: 'center', justifyContent: 'center' }}
       renderItem={({ item: level }) => (
         <Link 
-          href={ userData.stars >= level.starsForAccess ?
+          href={ userStarsBalance >= level.starsForAccess ?
             { pathname: "/[level]", params: { level: level.id.toString() } }
             :
-            { pathname: '/(modals)/universal-alert-modal', params: {message: 'Недостаточно звёзд', starsNeed: level.starsForAccess - userData.stars} }
+            { pathname: '/(modals)/universal-alert-modal', params: {message: 'Недостаточно звёзд', starsNeed: level.starsForAccess - userStarsBalance} }
           }
-          style={[styles.levelsListItem, {opacity: userData.stars >= level.starsForAccess ? 1 : 0.5}]}
+          style={[styles.levelsListItem, {opacity: userStarsBalance >= level.starsForAccess ? 1 : 0.5}]}
         >
           <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
           <Text style={styles.levelsListItemNumber}>{level.id <= 9 ? `0${level.id}` : level.id}</Text>

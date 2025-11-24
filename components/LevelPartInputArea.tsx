@@ -6,9 +6,22 @@ import {
 } from "react-native";
 import React, { useEffect, useRef } from "react";
 import { Image } from 'expo-image';
+import { useLevelInput } from "@/hoocs/useLevelInput";
+import { registerShake, unregisterShake } from "@/utils/shakeRegistry";
+import { useShakeAnimation } from "@/hoocs/useShakeAnimation";
+import Animated from "react-native-reanimated";
+
+const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
 
 export default function LevelPartInputArea() {
   const inputRef = useRef<TextInput>(null);
+  const { inputValue, setValue, handleSendValue } = useLevelInput();
+  const { animatedStyleShake, triggerShake } = useShakeAnimation();
+  
+  useEffect(() => {
+    registerShake('header-title', triggerShake);
+    return () => unregisterShake('header-title');
+  }, []);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -30,11 +43,15 @@ export default function LevelPartInputArea() {
           transition={1000}
         />
       </TouchableOpacity>
-      <TextInput
+      <AnimatedTextInput
         ref={inputRef}
-        style={styles.levelPartInput}
+        style={[styles.levelPartInput, animatedStyleShake]}
         cursorColor={'white'}
         selectionColor={'white'}
+        value={inputValue}
+        onChangeText={setValue}
+        onSubmitEditing={handleSendValue}
+        submitBehavior='submit'
       />
     </View>
   );
@@ -47,10 +64,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: 20,
     height: 50,
     width: "100%",
-    
   },
   levelPartInput: {
     flex: 1,
