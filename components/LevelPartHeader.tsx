@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect } from 'react'
 import { Ionicons } from '@expo/vector-icons'
-import { router } from 'expo-router'
+import { router, useSegments } from 'expo-router'
 import { useUserLevelData } from '@/hoocs/useUserLevelData'
 import LevelPartHeaderProgress from './LevelPartHeaderProgress'
 import { useLevelPartActions } from '@/store/useLevelPartStore'
@@ -13,6 +13,7 @@ export default function LevelPartHeader() {
   const { partProgress } = useUserLevelData();
   const {userData} = useUserLevelData();
   const {setAnsweredPercent} = useLevelPartActions();
+  const segment = useSegments() as string[];
 
   useEffect(() => {
     if (!levelPartData || !partProgress) return;
@@ -31,11 +32,11 @@ export default function LevelPartHeader() {
   
   return (
     <View style={styles.levelPartHeader}>
-      <Pressable onPress={() => router.back()}>
+      <Pressable onPress={() => router.dismiss()}>
         <Ionicons name='arrow-back' size={25} color={'#fff'} />
       </Pressable>
 
-      <LevelPartHeaderProgress />
+      {segment.includes('hints') ? null : <LevelPartHeaderProgress circleSize={40} textSize={12}/>}
 
       <View style={styles.levelPartBalance}>
         <View style={styles.levelPartBalanceIcon}/>
@@ -51,7 +52,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: 10,
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
+    minHeight: 60
   },
   levelPartProgress: {
     position: 'absolute',

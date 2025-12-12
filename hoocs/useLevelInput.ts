@@ -14,13 +14,15 @@ export function useLevelInput () {
   const { setValue } = useLevelInputActions();
   const { scrollToAnswers, horizontalScrollBack, scrollToAnswerVertical } = useScrollActions();
 
-  const handleSendValue = async () => {
+  const handleSendValue = async (extraValue = '') => {
     // 1) не ввёл ничего
-    if (inputValue.trim() === '') {
+    if (inputValue.trim() === '' && extraValue.trim() === '') {
+      console.log('слово не введено');
       return;
     }
 
-    const normalizedValue = normalizeInputValue(inputValue);
+    console.log('слово введено');
+    const normalizedValue = normalizeInputValue(inputValue ? inputValue : extraValue);
     
     const valueIsFound = levelPartData?.answers.find(answer => {
       // console.log(normalizeInputValue(answer.word));

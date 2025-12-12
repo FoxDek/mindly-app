@@ -6,6 +6,7 @@ import { Feather } from '@expo/vector-icons';
 export default function AgreementModal() {
   const params = useLocalSearchParams();
   const message = params.message as string || '';
+  
 
   return (
     <View style={styles.overlay}>

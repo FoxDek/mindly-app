@@ -3,7 +3,12 @@ import React from 'react'
 import * as Progress from 'react-native-progress';
 import { useAnsweredPercent } from '@/store/useLevelPartStore';
 
-export default function LevelPartHeaderProgress() {
+interface HeaderProgressProps {
+  circleSize: number,
+  textSize: number
+}
+
+export default function LevelPartHeaderProgress({circleSize, textSize}: HeaderProgressProps) {
   const answeredPercent = useAnsweredPercent();
 
   
@@ -11,15 +16,15 @@ export default function LevelPartHeaderProgress() {
     <View style={{ justifyContent: 'center', alignItems: 'center' }}>
       <Progress.Circle
         progress={answeredPercent / 100}
-        size={40}
-        thickness={3.5}
+        size={circleSize}
+        thickness={circleSize / 12}
         color="#A0D73A"
         unfilledColor="rgba(255,255,255,0.2)"
         borderWidth={0}
         showsText={false} // скрываем встроенный текст
       />
       <Text
-        style={styles.progressText}
+        style={[styles.progressText, { fontSize: textSize }]}
       >
         {Math.round(answeredPercent)}
       </Text>
@@ -31,7 +36,7 @@ const styles = StyleSheet.create({
   progressText: {
     position: 'absolute',
     color: '#fff',
-    fontSize: 12 ,
+    // fontSize: 12 ,
     fontWeight: '600',
   }
 })

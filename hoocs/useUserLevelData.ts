@@ -4,6 +4,7 @@ import { useLevelData } from "./useLevelData";
 interface PartProgress {
   answered: string[];
   isCompleted: boolean;
+  usedHints: { lettersOpened: number[]; extraLettersRemoved: boolean; }
 }
 
 interface LevelProgress {

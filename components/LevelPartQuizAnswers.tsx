@@ -30,6 +30,7 @@ export default function LevelPartQuizAnswers() {
 
   useEffect(() => {
     setVerticalScrollRef(verticalScrollRef as React.RefObject<ScrollView>);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!levelPartData) return null;

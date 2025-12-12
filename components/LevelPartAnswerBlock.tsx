@@ -1,8 +1,11 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import React, { useEffect } from 'react'
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useShakeAnimation } from '@/hoocs/useShakeAnimation';
 import { registerShake, unregisterShake } from '@/utils/shakeRegistry';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useLevelData } from '@/hoocs/useLevelData';
+import { useLevelInput } from '@/hoocs/useLevelInput';
 
 interface AnswerProps {
   word: string;
@@ -18,8 +21,10 @@ interface AnswerBlockProps {
 }
 
 export default function LevelPartAnswerBlock({ answer, isAnswered, blockColor, index }: AnswerBlockProps) {
+  const { levelPartData, level, levelPart  } = useLevelData();
   const { shake, triggerShake } = useShakeAnimation();
   const flip = useSharedValue(isAnswered ? 180 : 0); // состояние переворота
+
 
   useEffect(() => {
     if (isAnswered) {
@@ -64,39 +69,56 @@ export default function LevelPartAnswerBlock({ answer, isAnswered, blockColor, i
   useEffect(() => {
     registerShake(index, triggerShake)
     return () => unregisterShake(index)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return (
-    <Animated.View style={[styles.answerBlock, { backgroundColor: blockColor }, animatedStyle]}>
-      {/* FRONT (пока не угадано — проценты) */}
-      <Animated.View
-        style={[
-          // StyleSheet.absoluteFillObject,
-          frontOpacity,
-        ]}
-      >
-        <View style={{ justifyContent: 'center' }}>
-          <Text style={[styles.answerBlockText, { color: 'white' }]}>
-            {answer.percent}%
-          </Text>
-        </View>
-      </Animated.View>
+  if (!levelPartData) return null
 
-      {/* BACK (когда угадано — слово) */}
-      <Animated.View
-        style={[
-          StyleSheet.absoluteFillObject,
-          backOpacity,
-          { transform: [{ scaleX: -1 }]}, // обратный поворот для корректного отображения текста
-        ]}
-      >
-        <View style={{ justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-          <Text style={[styles.answerBlockText, { color: '#073B4C' }]}>
-            {answer.word}
-          </Text>
-        </View>
+  return (
+    <TouchableOpacity onPress={() => !isAnswered 
+      && router.push({
+        pathname: '/(modals)/universal-confirmation-modal',
+        params: {
+          message: 'Открыть подсказки?',
+          type: 'purchase',
+          word: answer.word,
+          wordIndex: index,
+          level,
+          levelPart,
+          question: levelPartData.question
+        }
+      })} activeOpacity={0.9}>
+      <Animated.View style={[styles.answerBlock, { backgroundColor: blockColor }, animatedStyle]}>
+        {/* FRONT (пока не угадано — проценты) */}
+        <Animated.View
+          style={[
+            // StyleSheet.absoluteFillObject,
+            frontOpacity,
+          ]}
+        >
+          <View style={{ justifyContent: 'center' }}>
+            <Text style={[styles.answerBlockText, { color: 'white' }]}>
+              {answer.percent}%
+            </Text>
+          </View>
+        </Animated.View>
+
+        {/* BACK (когда угадано — слово) */}
+        <Animated.View
+          style={[
+            StyleSheet.absoluteFillObject,
+            backOpacity,
+            { transform: [{ scaleX: -1 }]}, // обратный поворот для корректного отображения текста
+          ]}
+        >
+          <View style={{ justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+            <Text style={[styles.answerBlockText, { color: '#073B4C' }]}>
+              {answer.word}
+            </Text>
+          </View>
+        </Animated.View>
       </Animated.View>
-    </Animated.View>
+    </TouchableOpacity>
   );
 }
 

@@ -8,6 +8,7 @@ export interface UserGameProgress {
       [part: string]: {
         answered: string[];
         isCompleted: boolean;
+        usedHints: { lettersOpened: number[]; extraLettersRemoved: boolean; }
       };
     };
   };
@@ -37,6 +38,10 @@ function createDefaultUserData(): UserData {
       parts[String(part.id)] = {
         answered: [],
         isCompleted: false,
+        usedHints: {
+          lettersOpened: [1],
+          extraLettersRemoved: false,
+        }
       };
     });
 
@@ -60,11 +65,10 @@ const DEFAULT_USER_DATA = createDefaultUserData();
 //   balance: 600,
 //   progress: {
 //     "1": {
-//       completed: false,
 //       parts: {
-//         "1": { answered: ["корзина", "плед", "еда", "напитки", "шашлык", "уголь", "посуда"], isCompleted: true },
-//         "2": { answered: ["гриль"], isCompleted: true },
-//         "3": { answered: [], isCompleted: false }
+//         "1": { answered: ["корзина", "плед", "еда", "напитки", "шашлык", "уголь", "посуда"], isCompleted: true, usedHints: { lettersOpened: [0], extraLettersRemoved: false } },
+//         "2": { answered: ["гриль"], isCompleted: true, usedHints: { lettersOpened: [0], extraLettersRemoved: false } },
+//         "3": { answered: [], isCompleted: false, usedHints: { lettersOpened: [0], extraLettersRemoved: false } }
 //       }
 //     }
 //   }
