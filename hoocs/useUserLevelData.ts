@@ -1,11 +1,6 @@
 import { useUserActions, useUserData, useUserProgress } from "@/store/useUserStore";
 import { useLevelData } from "./useLevelData";
-
-interface PartProgress {
-  answered: string[];
-  isCompleted: boolean;
-  usedHints: { lettersOpened: number[]; extraLettersRemoved: boolean; }
-}
+import { PartProgress } from "@/types/userDataTypes";
 
 interface LevelProgress {
   // completed: boolean;
@@ -94,5 +89,7 @@ export function useUserLevelData() {
     setNewWord,
     userStarsBalance,
     updateLevelPartCompleted,
+    updatedProgressWithPart,
+    updateUserData
   }
 };

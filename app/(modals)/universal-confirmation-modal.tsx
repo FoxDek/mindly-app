@@ -1,7 +1,8 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
 import { router, useLocalSearchParams } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
+import { useUserBalance } from '@/hoocs/useUserBalance';
+import { useLevelHints } from '@/hoocs/useLevelHints';
 
 export default function ConfirmationModal() {
   const params = useLocalSearchParams();
@@ -12,21 +13,25 @@ export default function ConfirmationModal() {
   const levelPart = Number(params.levelPart);
   const wordIndex = Number(params.wordIndex) || 0;
   const question = params.question as string || '';
+  const { buyOpenHints } =  useUserBalance()
+  const {createUsedHints} = useLevelHints()
 
   const openHints = () => {
-    // ЗДЕСЬ НУЖНО ВЫЧЕСТЬ ИЗ БАЛАНСА ЮЗЕРА
-
-    // router.push({
-    //   pathname: '/hints',
-    //   params: { word, question, wordIndex, level, levelPart }
-    // })
+    buyOpenHints();
+    createUsedHints(wordIndex);
 
     router.dismiss(); // закрываем модалку
 
     setTimeout(() => {
       router.push({
-        pathname: '/hints',
-        params: { word, question, wordIndex, level, levelPart }
+        pathname: "/[level]/[levelPart]/hints/[wordIndex]",
+        params: {
+          level,
+          levelPart,
+          wordIndex,
+          word,
+          question
+        }
       });
     }, 0);
   }

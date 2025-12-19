@@ -1,24 +1,6 @@
 import { levels } from '@/assets/data/levels-data';
 import { create } from 'zustand'
-
-export interface UserGameProgress {
-  [level: string]: {
-    // completed: boolean;
-    parts: {
-      [part: string]: {
-        answered: string[];
-        isCompleted: boolean;
-        usedHints: { lettersOpened: number[]; extraLettersRemoved: boolean; }
-      };
-    };
-  };
-}
-
-interface UserData {
-  // stars: number;
-  balance: number;
-  progress: UserGameProgress;
-}
+import { UserData } from '@/types/userDataTypes';
 
 interface UserStore {
   userData: UserData;
@@ -38,10 +20,8 @@ function createDefaultUserData(): UserData {
       parts[String(part.id)] = {
         answered: [],
         isCompleted: false,
-        usedHints: {
-          lettersOpened: [1],
-          extraLettersRemoved: false,
-        }
+        hintsOpened: [],
+        usedHints: {}
       };
     });
 
@@ -66,7 +46,13 @@ const DEFAULT_USER_DATA = createDefaultUserData();
 //   progress: {
 //     "1": {
 //       parts: {
-//         "1": { answered: ["корзина", "плед", "еда", "напитки", "шашлык", "уголь", "посуда"], isCompleted: true, usedHints: { lettersOpened: [0], extraLettersRemoved: false } },
+//         "1": { answered: ["корзина", "плед", "еда", "напитки", "шашлык", "уголь", "посуда"], isCompleted: true, hintsOpened: [], 
+//            usedHints: {
+//             "0": { lettersOpened: [0], extraLettersRemoved: false },
+//             "1": { lettersOpened: [0], extraLettersRemoved: false },
+//             "2": { lettersOpened: [0, 1, 3], extraLettersRemoved: true },
+//           }
+//         },
 //         "2": { answered: ["гриль"], isCompleted: true, usedHints: { lettersOpened: [0], extraLettersRemoved: false } },
 //         "3": { answered: [], isCompleted: false, usedHints: { lettersOpened: [0], extraLettersRemoved: false } }
 //       }

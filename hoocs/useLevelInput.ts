@@ -2,9 +2,7 @@ import { useLevelInputActions, useLevelInputValue } from "@/store/useLevelInputS
 import { useLevelData } from "./useLevelData";
 import { useUserLevelData } from "./useUserLevelData";
 import { useScrollActions } from "@/store/useScrollStore";
-import { useShakeAnimation } from "./useShakeAnimation";
 import { triggerShakeById } from "@/utils/shakeRegistry";
-import { useEffect } from "react";
 
 export function useLevelInput () {
   const { levelPartData } = useLevelData();
@@ -17,11 +15,11 @@ export function useLevelInput () {
   const handleSendValue = async (extraValue = '') => {
     // 1) не ввёл ничего
     if (inputValue.trim() === '' && extraValue.trim() === '') {
-      console.log('слово не введено');
+      // console.log('слово не введено');
       return;
     }
 
-    console.log('слово введено');
+    // console.log('слово введено');
     const normalizedValue = normalizeInputValue(inputValue ? inputValue : extraValue);
     
     const valueIsFound = levelPartData?.answers.find(answer => {
@@ -43,7 +41,6 @@ export function useLevelInput () {
       if (partProgress && partProgress?.answered.includes(valueIsFound.word)) {
         scrollToAnswers();
         scrollToAnswerVertical(valueIsFoundIndex);
-        // triggerShake();
         setTimeout(() => {
           triggerShakeById(valueIsFoundIndex);
         }, 450);

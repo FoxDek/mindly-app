@@ -1,16 +1,13 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React, { forwardRef, useImperativeHandle } from 'react'
-
 import { useShakeAnimation } from '@/hoocs/useShakeAnimation';
 import Animated from 'react-native-reanimated';
+import { PartProgress } from '@/types/userDataTypes';
 
 interface HintsHiddenWordProps {
   currentWord: (string | null)[];
-  partProgress: {
-    usedHints: {
-      lettersOpened: number[]
-    }
-  };
+  partProgress: PartProgress;
+  wordIndex: number
 }
 
 interface HintsHiddenWordHandle {
@@ -21,7 +18,7 @@ interface HintsHiddenWordHandle {
 //   const { animatedStyleShake } = useShakeAnimation();
 
 const HintsHiddenWord = forwardRef<HintsHiddenWordHandle, HintsHiddenWordProps>(
-  ({ currentWord, partProgress }, ref) => {
+  ({ currentWord, partProgress, wordIndex }, ref) => {
     const { animatedStyleShake, triggerShake } = useShakeAnimation(3);
 
     useImperativeHandle(ref, () => ({
@@ -33,7 +30,7 @@ const HintsHiddenWord = forwardRef<HintsHiddenWordHandle, HintsHiddenWordProps>(
         style={[styles.hiddenWord, animatedStyleShake]}
       >
         {currentWord.map((char, index) => {
-          const isLetterOpened = partProgress.usedHints.lettersOpened.includes(index);
+          const isLetterOpened = partProgress?.usedHints[wordIndex]?.lettersOpened?.includes(index);
 
           return (
             <View 
@@ -43,7 +40,7 @@ const HintsHiddenWord = forwardRef<HintsHiddenWordHandle, HintsHiddenWordProps>(
                 isLetterOpened ? styles.openedLetter : styles.closedLetter
               ]}
             >
-              <Text style={styles.hiddenWordLetter}>{char ?? ''}</Text>
+              <Text style={styles.hiddenWordLetter}>{char?.toUpperCase() ?? ''}</Text>
             </View>
           );
         })}

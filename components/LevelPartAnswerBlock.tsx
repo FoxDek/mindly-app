@@ -3,9 +3,9 @@ import React, { useEffect } from 'react'
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useShakeAnimation } from '@/hoocs/useShakeAnimation';
 import { registerShake, unregisterShake } from '@/utils/shakeRegistry';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router } from 'expo-router';
 import { useLevelData } from '@/hoocs/useLevelData';
-import { useLevelInput } from '@/hoocs/useLevelInput';
+import { useUserLevelData } from '@/hoocs/useUserLevelData';
 
 interface AnswerProps {
   word: string;
@@ -24,6 +24,7 @@ export default function LevelPartAnswerBlock({ answer, isAnswered, blockColor, i
   const { levelPartData, level, levelPart  } = useLevelData();
   const { shake, triggerShake } = useShakeAnimation();
   const flip = useSharedValue(isAnswered ? 180 : 0); // состояние переворота
+  const {partProgress} = useUserLevelData();
 
 
   useEffect(() => {
@@ -32,6 +33,7 @@ export default function LevelPartAnswerBlock({ answer, isAnswered, blockColor, i
     } else {
       flip.value = withTiming(0, { duration: 600 });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAnswered]);
 
   const animatedStyle = useAnimatedStyle(() => {
@@ -72,11 +74,22 @@ export default function LevelPartAnswerBlock({ answer, isAnswered, blockColor, i
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (!levelPartData) return null
+  const handleOpenHints = () => {
+    if (isAnswered || !levelPartData || !level || !levelPart) return;
 
-  return (
-    <TouchableOpacity onPress={() => !isAnswered 
-      && router.push({
+    if (partProgress.hintsOpened.includes(index)) {
+      router.push({
+        pathname: '/[level]/[levelPart]/hints/[wordIndex]',
+        params: {
+          level,
+          levelPart,
+          wordIndex: index,
+          word: answer.word,
+          question: levelPartData.question,
+        },
+      });
+    } else {
+      router.push({
         pathname: '/(modals)/universal-confirmation-modal',
         params: {
           message: 'Открыть подсказки?',
@@ -85,9 +98,16 @@ export default function LevelPartAnswerBlock({ answer, isAnswered, blockColor, i
           wordIndex: index,
           level,
           levelPart,
-          question: levelPartData.question
-        }
-      })} activeOpacity={0.9}>
+          question: levelPartData.question,
+        },
+      });
+    }
+  }
+
+  if (!levelPartData) return null
+
+  return (
+    <TouchableOpacity onPress={handleOpenHints} activeOpacity={0.9}>
       <Animated.View style={[styles.answerBlock, { backgroundColor: blockColor }, animatedStyle]}>
         {/* FRONT (пока не угадано — проценты) */}
         <Animated.View

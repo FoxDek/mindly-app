@@ -1,38 +1,41 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
-import LevelPartHeader from '../../components/LevelPartHeader';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import LevelPartHeaderProgress from '../../components/LevelPartHeaderProgress';
 import { useUserLevelData } from '@/hoocs/useUserLevelData';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import HintsHiddenWord from '../../components/hints-components/HintsHiddenWord';
-import HintsExtraKeyboard from '../../components/hints-components/HintsExtraKeyboard';
 import { useShakeAnimation } from '@/hoocs/useShakeAnimation';
 import { registerShake, unregisterShake } from '@/utils/shakeRegistry';
-import { useLevelInput } from '@/hoocs/useLevelInput';
+import HintsExtraKeyboard from '@/components/hints-components/HintsExtraKeyboard';
+import HintsHiddenWord from '@/components/hints-components/HintsHiddenWord';
+import LevelPartHeader from '@/components/LevelPartHeader';
+import LevelPartHeaderProgress from '@/components/LevelPartHeaderProgress';
+import { useLevelData } from '@/hoocs/useLevelData';
+import { useLevelPartActions } from '@/store/useLevelPartStore';
+import HintsHelpButtons from '../../../../../components/hints-components/HintsHelpButtons';
 
 export default function Hints() {
   const params = useLocalSearchParams();
+  const { level, levelPart } = useLevelData();
   const { userAllLevelsProgress } = useUserLevelData();
+  const { setSolvedHintsWord } = useLevelPartActions();
   const word = params.word as string;
   const wordIndex = Number(params.wordIndex);
   const question = params.question as string;
-  const level = Number(params.level);
-  const levelPart = Number(params.levelPart); 
   const partProgress = userAllLevelsProgress[Number(level)].parts[Number(levelPart)];
   const router = useRouter();
+  const [chosenExtraLetters, setChosenExtraLetters] = useState<number[]>([]);
+  const { triggerShake } = useShakeAnimation();
+  const hiddenWordRef = useRef<{ triggerShake: () => void }>(null);
+  const wordLettersOpened = partProgress?.usedHints[wordIndex]?.lettersOpened || [0];
 
+  // изначально отображаемое слово
   const initialState = word.split('').map((letter, index) => 
-    partProgress?.usedHints.lettersOpened.includes(index)
+    wordLettersOpened.includes(index)
       ? letter
       : null
   )
 
   const [currentWord, setCurrentWord] = useState(initialState)
-  const [chosenExtraLetters, setChosenExtraLetters] = useState<number[]>([]);
-  const { triggerShake } = useShakeAnimation();
-
-  const hiddenWordRef = useRef<{ triggerShake: () => void }>(null);
 
   useEffect(() => {
     registerShake('hidden-word', triggerShake);
@@ -40,14 +43,11 @@ export default function Hints() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  
-
   useEffect(() => {
-    if (chosenExtraLetters.length + partProgress?.usedHints.lettersOpened.length === word.length) {
-      if (word === currentWord.join('')) {
-        // router.setParams({ autoSolve: word });
-        // router.back();
-        router.replace({ pathname: '/[level]/[levelPart]', params: { level, levelPart, autoSolve: word } });
+    if (chosenExtraLetters.length + wordLettersOpened.length === word.length) {
+      if (word.toLowerCase() === currentWord.join('').toLowerCase()) {
+        setSolvedHintsWord(word);
+        router.back();
       } else {
         hiddenWordRef.current?.triggerShake();
       }
@@ -75,9 +75,11 @@ export default function Hints() {
       >
         <View style={styles.hintsContent}>
 
-          <HintsHiddenWord currentWord={currentWord} partProgress={partProgress} ref={hiddenWordRef}/>
+          <HintsHiddenWord currentWord={currentWord} partProgress={partProgress} ref={hiddenWordRef} wordIndex={wordIndex}/>
 
-          <HintsExtraKeyboard currentWord={currentWord} setCurrentWord={setCurrentWord} wordIndex={wordIndex} chosenExtraLetters={chosenExtraLetters} setChosenExtraLetters={setChosenExtraLetters} partProgress={partProgress}/>
+          <HintsExtraKeyboard word={word} currentWord={currentWord} setCurrentWord={setCurrentWord} wordIndex={wordIndex} chosenExtraLetters={chosenExtraLetters} setChosenExtraLetters={setChosenExtraLetters} wordLettersOpened={wordLettersOpened} extraLettersRemoved={partProgress?.usedHints[wordIndex]?.extraLettersRemoved}/>
+
+          <HintsHelpButtons word={word} wordIndex={wordIndex} wordLength={word.length} currentWord={currentWord} setCurrentWord={setCurrentWord}/>
 
         </View>
       </SafeAreaView>

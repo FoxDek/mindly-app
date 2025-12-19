@@ -2,33 +2,29 @@ import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native
 import React from 'react'
 import { Feather } from '@expo/vector-icons';
 import { useLevelData } from '@/hoocs/useLevelData';
-
-interface partProgressProps {
-  answered: string[];
-  isCompleted: boolean;
-  usedHints: {
-      lettersOpened: number[];
-      extraLettersRemoved: boolean;
-  };
-}
+import { mapExtraLettersByWord } from '@/utils/hintsLogic';
 
 interface HintsExtraKeyboardProps {
+  word: string;
   currentWord: (string | null)[];
   wordIndex: number;
   setChosenExtraLetters: React.Dispatch<React.SetStateAction<number[]>>;
   chosenExtraLetters: number[];
   setCurrentWord: React.Dispatch<React.SetStateAction<(string | null)[]>>;
-  partProgress: partProgressProps
+  wordLettersOpened: number[];
+  extraLettersRemoved: boolean | undefined;
 }
 
-export default function HintsExtraKeyboard({currentWord, wordIndex, setChosenExtraLetters, chosenExtraLetters, setCurrentWord, partProgress }: HintsExtraKeyboardProps) {
+export default function HintsExtraKeyboard({word, currentWord, wordIndex, setChosenExtraLetters, chosenExtraLetters, setCurrentWord, wordLettersOpened, extraLettersRemoved }: HintsExtraKeyboardProps) {
   const { levelPartData } = useLevelData();
+  const extraLetters = levelPartData?.answers?.[wordIndex]?.extraLetters || [];
+  const extraLettersClear = mapExtraLettersByWord(word, extraLetters, wordLettersOpened);
 
   const openLetter = (index: number) => {
     const emptyIndex = currentWord.indexOf(null) // первый пустой индекс
     if (emptyIndex === -1) return;
 
-    const newLetter = levelPartData?.answers?.[wordIndex]?.extraLetters?.[index];
+    const newLetter = extraLetters?.[index];
     if (newLetter === undefined) return;
     const newWord = [...currentWord];
     newWord[emptyIndex] = newLetter;
@@ -39,7 +35,7 @@ export default function HintsExtraKeyboard({currentWord, wordIndex, setChosenExt
   const deleteLetter = () => {
     const lastFilledIndex = [...currentWord]
       .map((ch, i) => (ch !== null ? i : -1))
-      .filter(i => i !== -1 && !partProgress?.usedHints.lettersOpened.includes(i))
+      .filter(i => i !== -1 && !wordLettersOpened.includes(i))
       .pop();
 
     if (lastFilledIndex === undefined) return;
@@ -60,7 +56,7 @@ export default function HintsExtraKeyboard({currentWord, wordIndex, setChosenExt
   return (
     <View style={{ gap: 20}}>
       <FlatList
-        data={levelPartData?.answers[wordIndex].extraLetters}
+        data={extraLettersRemoved ? extraLettersClear : extraLetters}
         numColumns={9}
         keyExtractor={(item, index) => index.toString()}
         contentContainerStyle={{ flexGrow: 1, gap: 10 }}
@@ -68,11 +64,13 @@ export default function HintsExtraKeyboard({currentWord, wordIndex, setChosenExt
         scrollEnabled={false}
         renderItem={({item: letter, index}) => {
           const extraLetterIsChosen = chosenExtraLetters.includes(index);
+          const letterIsHidden = extraLetterIsChosen || letter === null;
+          // если буква выбрана - null, иначе - ЕСЛИ мы удалили лишние буквы и она не содержится в extraLettersClear, то null, ИНАЧЕ - открываем
 
           return (
-            <TouchableOpacity activeOpacity={0.5} onPress={() => extraLetterIsChosen ? null : openLetter(index)}>
-              <View key={index} style={[styles.extraLetterContainer, extraLetterIsChosen ? { backgroundColor: '#e9e9e9' } : {}]}>
-                <Text style={styles.extraletterText}>{extraLetterIsChosen ? '' :  letter}</Text>
+            <TouchableOpacity activeOpacity={0.5} onPress={() => letterIsHidden ? null : openLetter(index)}>
+              <View key={index} style={[styles.extraLetterContainer, letterIsHidden ? { borderColor: 'transparent' } : {}]}>
+                <Text style={styles.extraletterText}>{letterIsHidden ? '' :  letter}</Text>
               </View>
             </TouchableOpacity>
           )}}

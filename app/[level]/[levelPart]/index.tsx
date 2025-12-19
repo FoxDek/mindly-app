@@ -6,21 +6,23 @@ import LevelPartInputArea from '@/components/LevelPartInputArea';
 import { useLevelInput } from '@/hoocs/useLevelInput';
 import { useLocalSearchParams, router } from 'expo-router';
 import { useEffect } from 'react';
+import { useLevelPartActions, useSolvedHintsWord } from '@/store/useLevelPartStore';
 
 
 export default function LevelPart() {
-    const params = useLocalSearchParams();
-    const {handleSendValue} = useLevelInput();
+  const params = useLocalSearchParams();
+  const {handleSendValue} = useLevelInput();
+  const solvedHintsWord = useSolvedHintsWord();
+  const { setSolvedHintsWord } = useLevelPartActions();
   
   useEffect(() => {
-    if (params.autoSolve) {
-      console.log(params.autoSolve)
-      handleSendValue(params.autoSolve as string);
-  
-      // важно: очищаем параметр, чтобы эффект не повторился
-      router.setParams({ autoSolve: undefined });
+    if (solvedHintsWord) {
+      console.log(solvedHintsWord)
+      handleSendValue(solvedHintsWord);
+      setSolvedHintsWord('');
     }
-  }, [params.autoSolve]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [solvedHintsWord]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#4091E4' }}>

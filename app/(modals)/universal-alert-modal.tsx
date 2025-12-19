@@ -6,7 +6,7 @@ import { Feather } from '@expo/vector-icons';
 export default function AlertModal() {
   const params = useLocalSearchParams();
   const message = params.message as string || '';
-  const starsNeed = Number(params.starsNeed) || 0;
+  const starsNeed = Number(params.starsNeed) || null;
 
   return (
     <View style={styles.overlay}>
