@@ -3,6 +3,9 @@ import { useLevelData } from "./useLevelData";
 import { useUserLevelData } from "./useUserLevelData";
 import { useScrollActions } from "@/store/useScrollStore";
 import { triggerShakeById } from "@/utils/shakeRegistry";
+import { userRewards } from "@/assets/data/game-economic-data";
+import { useRouter } from "expo-router";
+import { useUserBalance } from "./useUserBalance";
 
 export function useLevelInput () {
   const { levelPartData } = useLevelData();
@@ -11,6 +14,9 @@ export function useLevelInput () {
   const inputValue = useLevelInputValue();
   const { setValue } = useLevelInputActions();
   const { scrollToAnswers, horizontalScrollBack, scrollToAnswerVertical } = useScrollActions();
+  const router = useRouter();
+  const {level, levelPart} = useLevelData();
+  const {accrueForLevelPart} = useUserBalance()
 
   const handleSendValue = async (extraValue = '') => {
     // 1) не ввёл ничего
@@ -52,7 +58,21 @@ export function useLevelInput () {
       scrollToAnswerVertical(valueIsFoundIndex);
 
       setTimeout(() => {
-        setNewWord(valueIsFound.word)
+        const {partCompleted, levelCompleted} = setNewWord(valueIsFound.word)
+
+        if (partCompleted) {
+          accrueForLevelPart();
+
+          router.push({
+            pathname: "/(modals)/universal-alert-modal",
+            params: {
+              message: `Подуровень ${level}.${levelPart} пройден!`,
+              coins: userRewards.levelPartCompleted,
+              next: levelCompleted ? 'level' : undefined,
+              level: level
+            },
+          })
+        }
       }, 600)
       
       setTimeout(() => {

@@ -3,7 +3,7 @@ import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Image } from 'expo-image';
+import { Image, ImageBackground } from 'expo-image';
 import { useLevelData } from '@/hoocs/useLevelData';
 import { useUserLevelData } from '@/hoocs/useUserLevelData';
 
@@ -33,19 +33,58 @@ export default function Level() {
         contentContainerStyle={{ flex: 1, width: '100%', gap: 20, paddingHorizontal: 40 }}
         renderItem={({ item: levelPart }) => (
           <Link href={{ pathname: "/[level]/[levelPart]", params: {  level: level?.toString(), levelPart: levelPart.id.toString() } }}>
-            <View style={styles.levelPartPreview}>
-              <Text style={styles.levelPartPreviewText}>{levelPart.question}</Text>
+
+            {levelPart.image && 
+              <ImageBackground
+                source={{uri: levelPart.image}}
+                style={styles.levelPartPreview}
+              >
+                <View style={styles.levelPartPreviewOverlay} />
+                <Image
+                  style={{
+                    width: 30,
+                    height: 30,
+                    opacity: userLevelProgress?.parts[levelPart.id.toString()]?.isCompleted ? 1 : 0.5,
+                    marginLeft: 'auto'
+                  }}
+                  source={require("@/assets/images/mindly-star.png")}
+                  contentFit="cover"
+                  transition={1000}
+                />
+              </ImageBackground>
+            }
+
+            {levelPart.question && 
+              <View style={styles.levelPartPreview}>
+                <Text style={styles.levelPartPreviewText}>{levelPart.question}</Text>
+                <Image
+                  style={{
+                    width: 30,
+                    height: 30,
+                    opacity: userLevelProgress?.parts[levelPart.id.toString()]?.isCompleted ? 1 : 0.5,
+                    marginLeft: 'auto'
+                  }}
+                  source={require("@/assets/images/mindly-star.png")}
+                  contentFit="cover"
+                  transition={1000}
+                />
+              </View>
+            }
+
+            {/* <View style={styles.levelPartPreview}>
+              {levelPart.question && <Text style={styles.levelPartPreviewText}>{levelPart.question}</Text>}
               <Image
                 style={{
                   width: 30,
                   height: 30,
-                  opacity: userLevelProgress?.parts[levelPart.id.toString()]?.isCompleted ? 1 : 0.5
+                  opacity: userLevelProgress?.parts[levelPart.id.toString()]?.isCompleted ? 1 : 0.5,
+                  marginLeft: 'auto'
                 }}
                 source={require("@/assets/images/mindly-star.png")}
                 contentFit="cover"
                 transition={1000}
               />
-            </View>
+            </View> */}
           </Link>
         )}
       />
@@ -88,7 +127,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#4091E4",
     borderRadius: 10,
     width: '100%',
-    justifyContent: "space-between"
+    justifyContent: "space-between",
+    overflow: 'hidden',
+  },
+  levelPartPreviewOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
   levelPartPreviewText: {
     fontSize: 16,

@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { FlatList, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native'
 import React from 'react'
 import { Feather } from '@expo/vector-icons';
 import { useLevelData } from '@/hoocs/useLevelData';
@@ -19,6 +19,7 @@ export default function HintsExtraKeyboard({word, currentWord, wordIndex, setCho
   const { levelPartData } = useLevelData();
   const extraLetters = levelPartData?.answers?.[wordIndex]?.extraLetters || [];
   const extraLettersClear = mapExtraLettersByWord(word, extraLetters, wordLettersOpened);
+  const {width} = useWindowDimensions();
 
   const openLetter = (index: number) => {
     const emptyIndex = currentWord.indexOf(null) // первый пустой индекс
@@ -69,8 +70,15 @@ export default function HintsExtraKeyboard({word, currentWord, wordIndex, setCho
 
           return (
             <TouchableOpacity activeOpacity={0.5} onPress={() => letterIsHidden ? null : openLetter(index)}>
-              <View key={index} style={[styles.extraLetterContainer, letterIsHidden ? { borderColor: 'transparent' } : {}]}>
-                <Text style={styles.extraletterText}>{letterIsHidden ? '' :  letter}</Text>
+              <View key={index} style={
+                [styles.extraLetterContainer,
+                letterIsHidden ? { borderColor: 'transparent' } : {},
+                {paddingHorizontal: width < 400 ? 4 : 6, paddingVertical: width < 400 ? 8 : 12}
+              ]}>
+                <Text style={[
+                  styles.extraletterText,
+                  {fontSize: width < 400 ? 20 : 24},
+                ]}>{letterIsHidden ? '' :  letter}</Text>
               </View>
             </TouchableOpacity>
           )}}
@@ -89,14 +97,14 @@ export default function HintsExtraKeyboard({word, currentWord, wordIndex, setCho
 const styles = StyleSheet.create({
   extraLetterContainer: {
     paddingHorizontal: 6,
-    paddingTop: 4,
-    paddingBottom: 6,
+    paddingVertical: 12,
     borderRadius: 12,
     minWidth: 34,
     width: 'auto',
     alignItems: 'center',
     borderColor: '#BABABA',
-    borderWidth: 1
+    borderWidth: 1,
+    includeFontPadding: false,
   },
   extraletterText: {
     fontSize: 24,

@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, useWindowDimensions } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useUserLevelData } from '@/hoocs/useUserLevelData';
@@ -27,6 +27,8 @@ export default function Hints() {
   const { triggerShake } = useShakeAnimation();
   const hiddenWordRef = useRef<{ triggerShake: () => void }>(null);
   const wordLettersOpened = partProgress?.usedHints[wordIndex]?.lettersOpened || [0];
+  
+  const { width, height } = useWindowDimensions();
 
   // изначально отображаемое слово
   const initialState = word.split('').map((letter, index) => 
@@ -44,7 +46,7 @@ export default function Hints() {
   }, []);
 
   useEffect(() => {
-    if (chosenExtraLetters.length + wordLettersOpened.length === word.length) {
+    if (currentWord.filter(ch => ch !== null).length === word.length) {
       if (word.toLowerCase() === currentWord.join('').toLowerCase()) {
         setSolvedHintsWord(word);
         router.back();
@@ -65,7 +67,7 @@ export default function Hints() {
 
         <View style={styles.headerContent}>
           <LevelPartHeaderProgress circleSize={80} textSize={18}/>
-          <Text style={styles.questionText}>{question}</Text>
+          <Text style={[styles.questionText, { fontSize: width > 360 ? 24 : 20}]}>{question}</Text>
         </View>
       </SafeAreaView>
 
@@ -79,14 +81,13 @@ export default function Hints() {
 
           <HintsExtraKeyboard word={word} currentWord={currentWord} setCurrentWord={setCurrentWord} wordIndex={wordIndex} chosenExtraLetters={chosenExtraLetters} setChosenExtraLetters={setChosenExtraLetters} wordLettersOpened={wordLettersOpened} extraLettersRemoved={partProgress?.usedHints[wordIndex]?.extraLettersRemoved}/>
 
-          <HintsHelpButtons word={word} wordIndex={wordIndex} wordLength={word.length} currentWord={currentWord} setCurrentWord={setCurrentWord}/>
+          <HintsHelpButtons word={word} wordIndex={wordIndex} wordLength={word.length} currentWord={currentWord} setCurrentWord={setCurrentWord} extraLettersRemoved={partProgress?.usedHints[wordIndex]?.extraLettersRemoved}/>
 
         </View>
       </SafeAreaView>
     </View>
   )
 }
-
 
 const styles = StyleSheet.create({
   hints: {
@@ -110,8 +111,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20
   },
   questionText: {
-    fontSize: 24,
-    color: 'white'
+    width: '60%',
+    textAlign: 'center',
+    color: 'white',
+    flexWrap: 'wrap',
   },
   hintsContent: {
     flex: 1,

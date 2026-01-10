@@ -18,7 +18,7 @@ export default function RootLayout() {
   
   return (
   <Stack screenOptions={{headerShown: false}}>
-    <Stack.Screen name="(tabs)" />
+    <Stack.Screen name="(tabs)"/>
     <Stack.Screen name="(modals)" options={{ 
       headerShown: false,
       presentation: 'transparentModal',

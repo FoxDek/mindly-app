@@ -25,28 +25,28 @@ export default function LevelsList() {
           }
           style={[styles.levelsListItem, {opacity: userStarsBalance >= level.starsForAccess ? 1 : 0.5}]}
         >
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-          <Text style={styles.levelsListItemNumber}>{level.id <= 9 ? `0${level.id}` : level.id}</Text>
-    
-          <FlatList
-            contentContainerStyle={{ gap: 5 }}
-            columnWrapperStyle={{ gap: 4, flexWrap: 'nowrap' }}
-            data={level.parts}
-            renderItem={({ item: levelPart }) => (
-              <Image
-                style={{
-                  width: 12,
-                  height: 12,
-                  opacity: userAllLevelsProgress[level.id.toString()]?.parts[levelPart.id.toString()]?.isCompleted ? 1 : 0.5
-                }}
-                source={require("@/assets/images/mindly-star.png")}
-                contentFit="cover"
-                transition={1000}
-              />
-            )}
-            keyExtractor={(levelPart) => levelPart.id.toString()}
-            numColumns={3}
-          />
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}>
+            <Text style={styles.levelsListItemNumber}>{level.id <= 9 ? `0${level.id}` : level.id}</Text>
+      
+            <FlatList
+              contentContainerStyle={{ gap: 5 }}
+              columnWrapperStyle={{ gap: 4, flexWrap: 'nowrap' }}
+              data={level.parts}
+              renderItem={({ item: levelPart }) => (
+                <Image
+                  style={{
+                    width: 14,
+                    height: 14,
+                    opacity: userAllLevelsProgress[level.id]?.parts[levelPart.id]?.isCompleted ? 1 : 0.5
+                  }}
+                  source={require("@/assets/images/mindly-star.png")}
+                  contentFit="cover"
+                  transition={1000}
+                />
+              )}
+              keyExtractor={(levelPart) => levelPart.id.toString()}
+              numColumns={3}
+            />
           </View>
         </Link>
       )}

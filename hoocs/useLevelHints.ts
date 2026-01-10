@@ -73,6 +73,6 @@ export function useLevelHints() {
     updateHintsOpened,
     createUsedHints,
     displayNewLetter,
-    deleteExtraLetters
+    deleteExtraLetters,
   };
 }

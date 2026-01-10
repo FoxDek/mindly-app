@@ -49,6 +49,7 @@ export default function LevelPartHeader() {
 const styles = StyleSheet.create({
   levelPartHeader: {
     flexDirection: 'row',
+    width: '100%',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: 10,

@@ -10,6 +10,7 @@ import { useLevelInput } from "@/hoocs/useLevelInput";
 import { registerShake, unregisterShake } from "@/utils/shakeRegistry";
 import { useShakeAnimation } from "@/hoocs/useShakeAnimation";
 import Animated from "react-native-reanimated";
+import { useUserLevelData } from "@/hoocs/useUserLevelData";
 
 const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
 
@@ -17,6 +18,7 @@ export default function LevelPartInputArea() {
   const inputRef = useRef<TextInput>(null);
   const { inputValue, setValue, handleSendValue } = useLevelInput();
   const { animatedStyleShake, triggerShake } = useShakeAnimation();
+  const {levelPartIsCompleted} = useUserLevelData();
   
   useEffect(() => {
     registerShake('header-title', triggerShake);
@@ -29,6 +31,10 @@ export default function LevelPartInputArea() {
     }, 300); // небольшая задержка, чтобы экран успел смонтироваться
     return () => clearTimeout(timeout);
   }, []);
+
+  const handleSubmitEditing = () => {
+    handleSendValue();
+  }
 
   return (
     <View style={styles.levelPartInputContainer}>
@@ -44,13 +50,14 @@ export default function LevelPartInputArea() {
         />
       </TouchableOpacity>
       <AnimatedTextInput
+        editable={!levelPartIsCompleted}
         ref={inputRef}
         style={[styles.levelPartInput, animatedStyleShake]}
         cursorColor={'white'}
         selectionColor={'white'}
         value={inputValue}
         onChangeText={setValue}
-        onSubmitEditing={handleSendValue}
+        onSubmitEditing={handleSubmitEditing}
         submitBehavior='submit'
       />
     </View>

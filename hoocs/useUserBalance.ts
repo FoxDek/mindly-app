@@ -1,12 +1,6 @@
-import { useUserActions, useUserData } from "@/store/useUserStore"
+import { actionsCosts, userRewards } from "@/assets/data/game-economic-data";
+import { useUserActions, useUserData } from "@/store/useUserStore";
 import { useRouter } from "expo-router";
-
-const actionsCosts = {
-  openHints: 30,
-  displayLetter: 30,
-  removeExtraLetters: 50,
-  revealWord: 80
-}
 
 export function useUserBalance() {
   const userData = useUserData();
@@ -16,26 +10,39 @@ export function useUserBalance() {
 
   const updateBalance = (newBalance: number) => {
     if (newBalance < 0) {
-      router.push({pathname: '/(modals)/universal-alert-modal', params: {message: 'Недостаточно средств'}});
-      return
+      router.push({
+        pathname: "/(modals)/universal-alert-modal",
+        params: { message: "Недостаточно средств" },
+      });
+      return false;
     }
 
-    updateUserData({balance: newBalance})
-  }
+    updateUserData({ balance: newBalance });
+
+    return true;
+  };
 
   const buyOpenHints = () => updateBalance(balance - actionsCosts.openHints);
 
-  const buyDisplayLetter = () => updateBalance(balance - actionsCosts.displayLetter);
+  const buyDisplayLetter = () =>
+    updateBalance(balance - actionsCosts.displayLetter);
 
-  const buyRemoveExtraLetters = () => updateBalance(balance - actionsCosts.removeExtraLetters);
+  const buyRemoveExtraLetters = () =>
+    updateBalance(balance - actionsCosts.removeExtraLetters);
 
   const buyRevealWord = () => updateBalance(balance - actionsCosts.revealWord);
+
+  const accrueForLevelPart = () => updateBalance(balance + userRewards.levelPartCompleted);
+
+  const accrueForLevel = () => updateBalance(balance + userRewards.levelCompleted);
 
   return {
     balance,
     buyOpenHints,
     buyDisplayLetter,
     buyRemoveExtraLetters,
-    buyRevealWord
-  }
+    buyRevealWord,
+    accrueForLevelPart,
+    accrueForLevel,
+  };
 }

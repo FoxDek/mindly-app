@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, useWindowDimensions, View } from 'react-native'
 import React, { forwardRef, useImperativeHandle } from 'react'
 import { useShakeAnimation } from '@/hoocs/useShakeAnimation';
 import Animated from 'react-native-reanimated';
@@ -20,6 +20,7 @@ interface HintsHiddenWordHandle {
 const HintsHiddenWord = forwardRef<HintsHiddenWordHandle, HintsHiddenWordProps>(
   ({ currentWord, partProgress, wordIndex }, ref) => {
     const { animatedStyleShake, triggerShake } = useShakeAnimation(3);
+    const {width} = useWindowDimensions();
 
     useImperativeHandle(ref, () => ({
       triggerShake,
@@ -31,16 +32,22 @@ const HintsHiddenWord = forwardRef<HintsHiddenWordHandle, HintsHiddenWordProps>(
       >
         {currentWord.map((char, index) => {
           const isLetterOpened = partProgress?.usedHints[wordIndex]?.lettersOpened?.includes(index);
+          const isChosenLetter = !isLetterOpened && char !== null;
 
           return (
             <View 
               key={index} 
               style={[
                 styles.letterContainer,
-                isLetterOpened ? styles.openedLetter : styles.closedLetter
+                isLetterOpened ? styles.openedLetter : styles.closedLetter,
+                isChosenLetter && styles.chosenLetter,
+                {paddingHorizontal: width < 400 ? 4 : 6, paddingVertical: width < 400 ? 8 : 12}
               ]}
             >
-              <Text style={styles.hiddenWordLetter}>{char?.toUpperCase() ?? ''}</Text>
+              <Text style={[
+                styles.hiddenWordLetter,
+                { color: isLetterOpened && index !== 0 ? '#FFD166' : '', fontSize: width < 400 ? 20 : 24 },
+              ]}>{char?.toUpperCase() ?? ''}</Text>
             </View>
           );
         })}
@@ -63,18 +70,24 @@ const styles = StyleSheet.create({
   },
   letterContainer: {
     paddingHorizontal: 6,
-    paddingTop: 4,
-    paddingBottom: 6,
+    paddingVertical: 12,
     borderRadius: 12,
     minWidth: 34,
     width: 'auto',
-    alignItems: 'center'
+    alignItems: 'center',
+    includeFontPadding: false,
+    borderColor: 'transparent',
+    borderWidth: 1,
   },
   openedLetter: {
     backgroundColor: 'transparent'
   },
   closedLetter: {
-    backgroundColor: '#E4E4E4'
+    backgroundColor: '#E4E4E4',
+  },
+  chosenLetter: {
+    backgroundColor: 'transparent',
+    borderColor: '#BABABA',
   },
   hiddenWordLetter: {
     fontSize: 24,

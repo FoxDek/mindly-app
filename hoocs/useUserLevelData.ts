@@ -1,6 +1,11 @@
-import { useUserActions, useUserData, useUserProgress } from "@/store/useUserStore";
-import { useLevelData } from "./useLevelData";
+import {
+  useUserActions,
+  useUserData,
+  useUserProgress,
+} from "@/store/useUserStore";
 import { PartProgress } from "@/types/userDataTypes";
+import { useLevelData } from "./useLevelData";
+import { useUserBalance } from "./useUserBalance";
 
 interface LevelProgress {
   // completed: boolean;
@@ -15,10 +20,15 @@ export function useUserLevelData() {
   const userAllLevelsProgress: UserProgress = userData.progress;
   const userLevelProgress = useUserProgress()[Number(level)];
   const partProgress = userLevelProgress?.parts[Number(levelPart)];
+  const levelPartIsCompleted = partProgress?.isCompleted;
   const { updateUserData } = useUserActions();
+  const {accrueForLevel, accrueForLevelPart} = useUserBalance();
 
   // функция для сокращения обновления прогресса:
-  const updatedProgressWithPart = (updatedPart: { answered: string[]; isCompleted: boolean; }) => {
+  const updatedProgressWithPart = (updatedPart: {
+    answered: string[];
+    isCompleted: boolean;
+  }) => {
     const updatedLevel = {
       ...userLevelProgress,
       parts: {
@@ -29,55 +39,65 @@ export function useUserLevelData() {
 
     return {
       ...userAllLevelsProgress,
-      [Number(level)]: updatedLevel
-    }
-  }
-  
+      [Number(level)]: updatedLevel,
+    };
+  };
+
+
+
+
   const setNewWord = (word: string) => {
     const updatedPart = {
       ...partProgress,
       answered: [...(partProgress?.answered || []), word],
     };
 
-    // обновляем прогресс юзера
-    const updatedProgress = updatedProgressWithPart(updatedPart);
-    updateUserData({ progress: updatedProgress });
-
     // сравнивниваем тот прогресс, который передали в данные юзера и данные уровней
     const partCompleted = updatedPart.answered.length === levelPartData?.answers.length;
+    
+    const finalPart = partCompleted
+      ? { ...updatedPart, isCompleted: true }
+      : updatedPart;
 
-    if (partCompleted) {
-      console.log('part completed');
-      const completedPart = {
-        ...updatedPart,
-        isCompleted: true
-      }
+    const finalProgress = updatedProgressWithPart(finalPart);
+    updateUserData({ progress: finalProgress });
 
-      updateLevelPartCompleted(completedPart);
-    }
+    // if (partCompleted) {
+    //   console.log("part completed");
+    //   accrueForLevelPart();
+    // }
 
     // Проверка без активности (можно подключить какую-нибудь модалку после выполнения уровня)
-    const levelCompleted = Object.values(updatedProgress[Number(level)].parts)
-      .every((p: PartProgress) => p.isCompleted);
+    const levelCompleted = Object.values(
+      finalProgress[Number(level)].parts
+    ).every((p: PartProgress) => p.isCompleted);
 
-    if (levelCompleted) {
-      console.log('level completed');
-    } 
-  } 
+    // if (levelCompleted) {
+    //   console.log("level completed");
+    //   accrueForLevel();
+    // }
 
-  const updateLevelPartCompleted = (updatedPart: { answered: string[]; isCompleted: boolean; }) => {
+    return {
+      partCompleted,
+      levelCompleted
+    }
+  };
+
+  const updateLevelPartCompleted = (updatedPart: {
+    answered: string[];
+    isCompleted: boolean;
+  }) => {
     const updatedProgress = updatedProgressWithPart(updatedPart);
     updateUserData({ progress: updatedProgress });
-  }
+  };
 
   const getUserStars = () => {
     const stars = Object.values(userAllLevelsProgress)
-      .flatMap(level => Object.values(level.parts))
-      .filter(part => part.isCompleted)
-      .length;
+      .flatMap((level) => Object.values(level.parts))
+      .filter((part) => part.isCompleted).length;
 
     return stars;
-  }
+  };
 
   const userStarsBalance = getUserStars();
 
@@ -90,6 +110,7 @@ export function useUserLevelData() {
     userStarsBalance,
     updateLevelPartCompleted,
     updatedProgressWithPart,
-    updateUserData
-  }
-};
+    updateUserData,
+    levelPartIsCompleted,
+  };
+}

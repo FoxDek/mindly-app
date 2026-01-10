@@ -17,7 +17,9 @@ export default function ConfirmationModal() {
   const {createUsedHints} = useLevelHints()
 
   const openHints = () => {
-    buyOpenHints();
+    if (buyOpenHints() === false) {
+      return
+    }
     createUsedHints(wordIndex);
 
     router.dismiss(); // закрываем модалку
