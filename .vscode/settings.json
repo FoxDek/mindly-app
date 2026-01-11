@@ -5,7 +5,6 @@
     "source.sortMembers": "explicit"
   },
   "hide-files.files": [
-    "tsconfig.json",
     "README.md",
     "Desktop.ini",
     "expo-env.d.ts",
@@ -23,7 +22,6 @@
     "**/.hg": true,
     "**/.DS_Store": true,
     "**/Thumbs.db": true,
-    "tsconfig.json": true,
     "README.md": true,
     "Desktop.ini": true,
     "expo-env.d.ts": true,
